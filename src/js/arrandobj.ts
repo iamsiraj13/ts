@@ -13,3 +13,11 @@ let persons = {
 persons.name = '234'
 
 console.log(persons)
+
+let cow:string | boolean;
+
+cow = 'sirajul'
+
+let students:(string | number)[]=[232,'sirajul']
+
+ 

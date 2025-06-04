@@ -8,3 +8,6 @@ let persons = {
 };
 persons.name = '234';
 console.log(persons);
+let cow;
+cow = 'sirajul';
+let students = [232, 'sirajul'];
