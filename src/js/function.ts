@@ -1,5 +1,9 @@
-const myFunc:Function = (a:string,b:string,c?:string)=>{
-    console.log(`${a} ${b} ${c}`)
-}
+ function sayHi(person:Function){
+    console.log(person)
+ }
 
-myFunc('sirajul','islam')
+ function add(a:number):number{
+    return a;
+ }
+
+ sayHi(add)

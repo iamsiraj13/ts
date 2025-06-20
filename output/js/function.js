@@ -1,5 +1,8 @@
 "use strict";
-const myFunc = (a, b, c) => {
-    console.log(`${a} ${b} ${c}`);
-};
-myFunc('sirajul', 'islam');
+function sayHi(person) {
+    console.log(person);
+}
+function add(a) {
+    return a;
+}
+sayHi(add);
