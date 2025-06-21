@@ -9,9 +9,13 @@ console.log(addId({
     age:25
 }))
 
+
+enum RType{
+    SUCCESS, FAILURE, UNAUTHENTICATED,FORBIDDEN
+}
 interface APIResponse<T>{
     status:number;
-    type:string; 
+    type:RType; 
     data:T
 }
 interface User {
@@ -21,7 +25,7 @@ interface User {
 
 const response1:APIResponse<User>= {
     status:200,
-    type:'good',
+    type:RType.SUCCESS,
     data: {
         name:'siraj',
         age:20

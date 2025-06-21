@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React TypeScript Generics Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/5.1.3/typescript.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 600px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .card {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel" data-presets="typescript,react">
+      // উদাহরণ ১: জেনেরিক কম্পোনেন্ট - ডেটা কার্ড
+      interface CardProps<T> {
+        item: T;
+        renderContent: (item: T) => JSX.Element;
+      }
+
+      function Card<T>({ item, renderContent }: CardProps<T>) {
+        return <div className="card">{renderContent(item)}</div>;
+      }
+
+      // উদাহরণ ২: জেনেরিক কাস্টম হুক - ডেটা ফেচিং
+      interface FetchState<T> {
+        data: T | null;
+        loading: boolean;
+        error: string | null;
+      }
+
+      function useFetchData<T>(url: string): FetchState<T> {
+        const [state, setState] = React.useState<FetchState<T>>({
+          data: null,
+          loading: true,
+          error: null,
+        });
+
+        React.useEffect(() => {
+          fetch(url)
+            .then((response) => response.json())
+            .then((data: T) => {
+              setState({ data, loading: false, error: null });
+            })
+            .catch((error) => {
+              setState({ data: null, loading: false, error: error.message });
+            });
+        }, [url]);
+
+        return state;
+      }
+
+      // উদাহরণ ৩: জেনেরিক ডেটা টেবিল কম্পোনেন্ট
+      interface TableProps<T> {
+        data: T[];
+        columns: { key: keyof T; label: string }[];
+      }
+
+      function DataTable<T>({ data, columns }: TableProps<T>) {
+        return (
+          <table>
+            <thead>
+              <tr>
+                {columns.map((col) => (
+                  <th key={String(col.key)}>{col.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr key={item?.id}>
+                  {columns.map((col) => (
+                    <td key={String(col.key)}>{String(item[col.key])}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
+      }
+
+      // মূল অ্যাপ কম্পোনেন্ট
+      function App() {
+        // জেনেরিক কার্ডের জন্য ডেটা
+        const user = { id: 1, name: "Alice", email: "alice@example.com" };
+        const product = { id: 101, name: "Laptop", price: 999 };
+
+        // জেনেরিক হুক ব্যবহার
+        const { data, loading, error } = useFetchData<{ id: number; title: string }>(
+          "https://jsonplaceholder.typicode.com/todos/1"
+        );
+
+        // জেনেরিক টেবিলের জন্য ডেটা
+        const users = [
+          { id: 1, name: "Alice", email: "alice@example.com" },
+          { id: 2, name: "Bob", email: "bob@example.com" },
+        ];
+
+        return (
+          <div>
+            <h1>React TypeScript Generics Examples</h1>
+
+            {/* উদাহরণ ১: জেনেরিক কার্ড */}
+            <h2>Generic Card</h2>
+            <Card item={user} renderContent={(item) => <p>Name: {item.name}, Email: {item.email}</p>} />
+            <Card item={product} renderContent={(item) => <p>Product: {item.name}, Price: ${item.price}</p>} />
+
+            {/* উদাহরণ ২: জেনেরিক হুক */}
+            <h2>Generic Fetch Hook</h2>
+            {loading && <p>Loading...</p>}
+            {error && <p>Error: {error}</p>}
+            {data && <p>Fetched Data: {data.title}</p>}
+
+            {/* উদাহরণ ৩: জেনেরিক ডেটা টেবিল */}
+            <h2>Generic Data Table</h2>
+            <DataTable
+              data={users}
+              columns={[
+                { key: "id", label: "ID" },
+                { key: "name", label: "Name" },
+                { key: "email", label: "Email" },
+              ]}
+            />
+          </div>
+        );
+      }
+
+      // রেন্ডার
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
